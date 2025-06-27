@@ -1,3 +1,4 @@
 selenium==4.33
 numpy
 pandas==2.3
+lxml

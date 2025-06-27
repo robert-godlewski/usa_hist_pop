@@ -10,7 +10,7 @@ To create the environment for the first time just run the following in the termi
 
 ## To Scrape
 Run the following to scrape data from wikipedia:
-...
+`bash scrape.sh`
 
 # References
 * [Selenium Documentation](https://www.selenium.dev/documentation/)

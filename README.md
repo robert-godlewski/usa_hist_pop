@@ -8,6 +8,8 @@ Generally run this program as a CLI within the computer terminal.
 To create the environment for the first time just run the following in the terminal:
 `bash createenv.sh`
 
+This will also create a database as well.
+
 ## To Scrape
 Run the following to scrape data from wikipedia:
 `bash scrape.sh`

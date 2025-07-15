@@ -11,6 +11,10 @@ def removeBrackets(data: str) -> str:
     temp = re.sub(r'\[.*?\]', '', data)
     return temp.rstrip() # removes the whitespace after temp
 
+def removeParenthesis(data: str) -> str:
+    temp = re.sub(r'\(.*?\)', '', data)
+    return temp.rstrip()
+
 def largeNumstrToNum(value: str) -> int:
     temp = removeBrackets(value)
     cleantemp = temp.replace(',','') # turns '1,000' to '1000'

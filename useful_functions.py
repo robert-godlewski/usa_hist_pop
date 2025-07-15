@@ -50,7 +50,10 @@ def saveCensusData(location, value, col_name: str, con: sqlite3.Connection, cur:
 
 def addCensusTable(table: pandas.DataFrame, con: sqlite3.Connection, cur: sqlite3.Cursor) -> None:
     for index, row in table.iterrows():
-        name = table.at[row, 'Name']
+        print(f'Index: {index}')
+        print('Row:', row)
+        # print('Name:', table[row]['Name'])
+        name = table.at[row, 'Name'] # This is breaking for some reason - Review https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.at.html#pandas.DataFrame.at
         if '[' in name:
             name = removeBrackets(name)
         cur.execute("SELECT * FROM locations WHERE name = ? ", (name,))
@@ -58,5 +61,5 @@ def addCensusTable(table: pandas.DataFrame, con: sqlite3.Connection, cur: sqlite
         location = json.loads(location_raw)
         addRegionAdmittance(row, location, table, con, cur)
         for col_name, value in row.items():
-            if col_name is not 'Name' and col_name is not _ADMIT_TITLE:
+            if col_name is not 'Name' and col_name != _ADMIT_TITLE:
                 saveCensusData(location, value, col_name, con, cur)

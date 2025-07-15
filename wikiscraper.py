@@ -15,14 +15,14 @@ driver.get(url)
 # Scraping Links
 #elements = driver.find_element(by=By.TAG_NAME, value="table")
 elementBaseXPath = "//table[@class='wikitable sortable sticky-header short-under col1left col2center jquery-tablesorter']/tbody/tr/td/a"
-elements = driver.find_elements(by=By.XPATH, value=elementBaseXPath)
+elements = driver.find_elements(by=By.XPATH, value=elementBaseXPath) # This is not working because elements = []
 regions = []
 links = []
 for element in elements:
     regions.append(element.get_attribute('title'))
     links.append(element.get_attribute('href'))
-print('Regions:', regions)
-print('Links:', links)
+# print('Regions:', regions)
+# print('Links:', links)
 
 # Below refers to XPaths for other tables that we might need
 # Skipping the first one because that's the enslaved population from 1790 to 1860
@@ -38,8 +38,7 @@ tables = pandas.read_html(html)
 driver.quit()
 
 # From this we want to save tables 0, 2, and 3 only
-for table in tables:
-    print(table)
+# for table in tables: print(table)
 
 print('Found Data')
 

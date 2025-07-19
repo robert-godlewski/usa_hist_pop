@@ -12,7 +12,7 @@ This will also create a database as well.
 ## To Scrape
 Run the following to scrape data from wikipedia: % `bash scrape.sh`
 
-> Warning: This just runs wikiscraper.py and not the tables!
+> Warning: This just no longer works and needs to be fixed!
 
 > Note: will need to fix this so that you will need to choose between collecting links or data in tables to save to the db.
 

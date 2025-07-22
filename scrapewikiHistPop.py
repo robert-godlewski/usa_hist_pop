@@ -1,17 +1,32 @@
 import sqlite3
 # import pandas
 
-from selenium.webdriver.common.by import By
+# from selenium.webdriver.common.by import By
 
-from useful_functions import removeBrackets, removeParenthesis #, addCensusTable
+from useful_functions import scrapeLinks #, removeBrackets, removeParenthesis, addCensusTable
 from useful_variables import driver, usaRegionsUrl
 
-# Need to fix this so that Wikipedia doesn't block it for calling up too many requests.
-driver.get(usaRegionsUrl)
+con = sqlite3.connect('db.sqlite')
+cur = con.cursor()
+driver.get(usaRegionsUrl) # Need to fix this so that Wikipedia doesn't block it for calling up too many requests.
 
-# Scraping Links - Fix this to use hash maps instead to add in everything instead of using limits.
-elementBaseXPath = "//table/tbody/tr/td/a" # Now collects over 200 which we really don't need all
-elements = driver.find_elements(by=By.XPATH, value=elementBaseXPath)
+# Scraping Links
+# For the current regions in the USA with significan populations (1-57)
+r = 1
+while r <= 57:
+    xpath = f"//table[@class='wikitable sortable sticky-header sort-under col1left col2center jquery-tablesorter']/tbody/tr[{r}]/td/a"
+    scrapeLinks(xpath, driver, con, cur)
+    r += 1
+
+# Now getting the Minor Islands and former territories' populations (1-14)
+t = 1
+while t <= 14:
+    xpath = f"//table[@class='wikitable sortable sort-under col1left col2center jquery-tablesorter']/tbody/tr[{t}]/td/a"
+    scrapeLinks(xpath, driver, con, cur)
+    t += 1
+
+# elementBaseXPath = "//table/tbody/tr/td/a"
+# elements = driver.find_elements(by=By.XPATH, value=elementBaseXPath)
 # regions = []
 # links = []
 # i = 0
@@ -35,23 +50,20 @@ driver.quit()
 
 print('Found Data')
 
-con = sqlite3.connect('db.sqlite')
-cur = con.cursor()
-
-for element in elements:
-    link = element.get_attribute('href')
-    region = element.get_attribute('title')
-    print('Unformatted region:', region)
-    if '[' in region:
-        region = removeBrackets(region)
-    if '(' in region:
-        region = removeParenthesis(region)
-    if ',' in region: # This is the USA capital
-        region = 'District of Columbia'
-    print('Formatted region:', region)
-    print('Link:', link)
-    cur.execute("INSERT OR IGNORE INTO locations (name, url) VALUES ( ?, ? )", (region, link,))
-    con.commit()
+# for element in elements:
+#     link = element.get_attribute('href')
+#     region = element.get_attribute('title')
+#     print('Unformatted region:', region)
+#     if '[' in region:
+#         region = removeBrackets(region)
+#     if '(' in region:
+#         region = removeParenthesis(region)
+#     if ',' in region: # This is the USA capital
+#         region = 'District of Columbia'
+#     print('Formatted region:', region)
+#     print('Link:', link)
+#     cur.execute("INSERT OR IGNORE INTO locations (name, url) VALUES ( ?, ? )", (region, link,))
+#     con.commit()
 
 # Adding in the region and link to existing table
 # i = 0

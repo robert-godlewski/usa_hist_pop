@@ -4,7 +4,10 @@ import re
 import json
 import pandas
 
-_ADMIT_TITLE = 'Admitted[d]'
+from selenium.webdriver import Chrome
+from selenium.webdriver.common.by import By
+
+from .useful_variables import ADMIT_TITLE
 
 def removeBrackets(data: str) -> str:
     # also removes the garbage within the []
@@ -20,13 +23,29 @@ def largeNumstrToNum(value: str) -> int:
     cleantemp = temp.replace(',','') # turns '1,000' to '1000'
     return int(cleantemp)
 
+def scrapeLinks(xpath: str, driver: Chrome, con: sqlite3.Connection, cur: sqlite3.Cursor) -> None:
+    element = driver.find_element(by=By.XPATH, value=xpath)
+    link = element.get_attribute('href')
+    region = element.get_attribute('title')
+    print('Unformatted region:', region)
+    if '[' in region:
+        region = removeBrackets(region)
+    if '(' in region:
+        region = removeParenthesis(region)
+    if ',' in region: # This is the USA capital
+        region = 'District of Columbia'
+    print('Formatted region:', region)
+    print('Link:', link)
+    cur.execute("INSERT OR IGNORE INTO locations (name, url) VALUES ( ?, ? )", (region, link,))
+    con.commit()
+
 def addRegionAdmittance(row, location, table: pandas.DataFrame, con: sqlite3.Connection, cur: sqlite3.Cursor) -> None:
-    if _ADMIT_TITLE in table.columns:
+    if ADMIT_TITLE in table.columns:
         has_admit = True
     else:
         has_admit = False
     if has_admit and 'id' in location:
-        admit_raw = table.at[row, _ADMIT_TITLE]
+        admit_raw = table.at[row, ADMIT_TITLE]
         if admit_raw:
             admitted = int(admit_raw)
         else:
@@ -65,5 +84,5 @@ def addCensusTable(table: pandas.DataFrame, con: sqlite3.Connection, cur: sqlite
         location = json.loads(location_raw)
         addRegionAdmittance(row, location, table, con, cur)
         for col_name, value in row.items():
-            if col_name is not 'Name' and col_name != _ADMIT_TITLE:
+            if col_name is not 'Name' and col_name != ADMIT_TITLE:
                 saveCensusData(location, value, col_name, con, cur)

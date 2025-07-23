@@ -23,7 +23,7 @@ def largeNumstrToNum(value: str) -> int:
     cleantemp = temp.replace(',','') # turns '1,000' to '1000'
     return int(cleantemp)
 
-def scrapeLinks(xpath: str, driver: Chrome, con: sqlite3.Connection, cur: sqlite3.Cursor) -> None:
+def scrapeLinks(xpath: str, driver: Chrome, con: sqlite3.Connection, cur: sqlite3.Cursor) -> None: # Will need to test this function later on
     element = driver.find_element(by=By.XPATH, value=xpath)
     link = element.get_attribute('href')
     region = element.get_attribute('title')
@@ -32,12 +32,21 @@ def scrapeLinks(xpath: str, driver: Chrome, con: sqlite3.Connection, cur: sqlite
         region = removeBrackets(region)
     if '(' in region:
         region = removeParenthesis(region)
-    if ',' in region: # This is the USA capital - Need more of a specific because there's one entry that didn't work.
+    # Special cases specific to USA
+    if ', D.C.' in region: # American Capital
         region = 'District of Columbia'
+    if 'Swan Islands,' in region: # Old territory now part of Honduras
+        region = 'Swan Islands'
     print('Formatted region:', region)
     print('Link:', link)
-    cur.execute("INSERT OR IGNORE INTO locations (name, url) VALUES ( ?, ? )", (region, link,))
-    con.commit()
+    try:
+        cur.execute("SELECT name, url FROM locations WHERE ( name, url ) AS ( ?, ? )", (region, link,))
+        print("Already have this in db.")
+    except:
+        cur.execute("INSERT OR IGNORE INTO locations (name, url) VALUES ( ?, ? )", (region, link,))
+        print('Added in new data.')
+    finally:
+        con.commit()
 
 # def addRegionAdmittance(row, location, table: pandas.DataFrame, con: sqlite3.Connection, cur: sqlite3.Cursor) -> None:
 #     if ADMIT_TITLE in table.columns:

@@ -48,6 +48,7 @@ def scrapeLinks(xpath: str, driver: Chrome, con: sqlite3.Connection, cur: sqlite
     finally:
         con.commit()
 
+# Fix the functions below
 # def addRegionAdmittance(row, location, table: pandas.DataFrame, con: sqlite3.Connection, cur: sqlite3.Cursor) -> None:
 #     if ADMIT_TITLE in table.columns:
 #         has_admit = True
@@ -62,23 +63,23 @@ def scrapeLinks(xpath: str, driver: Chrome, con: sqlite3.Connection, cur: sqlite
 #         cur.execute("UPDATE locations SET admitted = ? WHERE id = ? ", (admitted, location['id'],))
 #         con.commit()
 
-def saveCensusData(location, value, col_name: str, con: sqlite3.Connection, cur: sqlite3.Cursor) -> None:
-    if '[' in col_name:
-        year_raw = removeBrackets(col_name)
-        year = int(year_raw)
-    else:
-        year = int(col_name)
-    if type(value) is float:
-        pop = int(value)
-    elif type(value) is str:
-        if '[' in value:
-            pop = largeNumstrToNum(value)
-        else:
-            pop = int(value)
-    elif type(value) is None:
-        pop = 0
-    cur.execute("INSERT OR IGNORE INTO census (year, population, location_id) VALUES ( ?, ?, ? )", (year, pop, location['id'],))
-    con.commit()
+# def saveCensusData(location, value, col_name: str, con: sqlite3.Connection, cur: sqlite3.Cursor) -> None:
+#     if '[' in col_name:
+#         year_raw = removeBrackets(col_name)
+#         year = int(year_raw)
+#     else:
+#         year = int(col_name)
+#     if type(value) is float:
+#         pop = int(value)
+#     elif type(value) is str:
+#         if '[' in value:
+#             pop = largeNumstrToNum(value)
+#         else:
+#             pop = int(value)
+#     elif type(value) is None:
+#         pop = 0
+#     cur.execute("INSERT OR IGNORE INTO census (year, population, location_id) VALUES ( ?, ?, ? )", (year, pop, location['id'],))
+#     con.commit()
 
 # def addCensusTable(table: pandas.DataFrame, con: sqlite3.Connection, cur: sqlite3.Cursor) -> None:
 #     for index, row in table.iterrows():

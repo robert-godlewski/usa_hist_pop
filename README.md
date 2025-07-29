@@ -1,6 +1,20 @@
 # Description
 Tracking the population of each region of the USA over time based off of census data since the first one in 1790 to 2020.
 
+# DB layout
+This project saves the data to a sqlite database to temporarily save the data to constantly refer to.
+
+## Locations
+This table has the basic information for each general "region" within the USA.
+
+Column data:
+* id: Foreign Key
+* name: What the region is called
+* url: url link to refer to
+* title: Country/ State/ Territory
+* admitted: Year added into the USA
+* disestablished: Year removed from the USA
+
 # Commands
 Generally run this program as a CLI within the computer terminal.
 

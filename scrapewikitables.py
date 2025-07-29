@@ -1,7 +1,7 @@
 import sqlite3
 import pandas
 
-from useful_variables import driver, usaRegionsUrl
+from useful_variables import temp_db, driver, usaRegionsUrl
 
 # Get the tables from wikipedia
 driver.get(usaRegionsUrl)
@@ -9,7 +9,7 @@ html = driver.page_source
 tables = pandas.read_html(html)
 driver.quit()
 
-con = sqlite3.connect('tempdb.sqlite')
+con = sqlite3.connect(temp_db)
 cur = con.cursor()
 
 

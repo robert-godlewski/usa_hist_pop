@@ -1,6 +1,9 @@
 # List of useful variables used in multiple files
 from selenium.webdriver import Chrome #, Firefox
 
+main_db = 'db.sqlite'
+temp_db = 'tempdb.sqlite'
+
 driver = Chrome()
 # driver = Firefox()
 baseUrl = 'https://en.wikipedia.org'

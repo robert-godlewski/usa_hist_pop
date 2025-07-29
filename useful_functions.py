@@ -9,17 +9,24 @@ from selenium.webdriver.common.by import By
 
 # from .useful_variables import ADMIT_TITLE - This is causing bugs for some reason?
 
-def removeBrackets(data: str) -> str:
+def _removeBrackets(data: str) -> str:
     # also removes the garbage within the []
     temp = re.sub(r'\[.*?\]', '', data)
     return temp.rstrip() # removes the whitespace after temp
 
-def removeParenthesis(data: str) -> str:
+def _removeParenthesis(data: str) -> str:
     temp = re.sub(r'\(.*?\)', '', data)
     return temp.rstrip()
 
+def cleanData(data: str) -> str:
+    if '[' in data:
+        data = _removeBrackets(data)
+    if '(' in data:
+        data = _removeParenthesis(data)
+    return data
+
 def largeNumstrToNum(value: str) -> int:
-    temp = removeBrackets(value)
+    temp = cleanData(value)
     cleantemp = temp.replace(',','') # turns '1,000' to '1000'
     return int(cleantemp)
 
@@ -28,10 +35,7 @@ def scrapeLinks(xpath: str, driver: Chrome, con: sqlite3.Connection, cur: sqlite
     link = element.get_attribute('href')
     region = element.get_attribute('title')
     print('Unformatted region:', region)
-    if '[' in region:
-        region = removeBrackets(region)
-    if '(' in region:
-        region = removeParenthesis(region)
+    region = cleanData(region)
     # Special cases specific to USA
     if ', D.C.' in region: # American Capital
         region = 'District of Columbia'

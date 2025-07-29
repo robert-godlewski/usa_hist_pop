@@ -1,9 +1,9 @@
 import sqlite3
 
 from useful_functions import scrapeLinks
-from useful_variables import driver, usaRegionsUrl
+from useful_variables import main_db, driver, usaRegionsUrl
 
-con = sqlite3.connect('db.sqlite')
+con = sqlite3.connect(main_db)
 cur = con.cursor()
 driver.get(usaRegionsUrl)
 

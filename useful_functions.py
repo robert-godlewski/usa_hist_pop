@@ -52,6 +52,16 @@ def scrapeLinks(xpath: str, driver: Chrome, con: sqlite3.Connection, cur: sqlite
     finally:
         con.commit()
 
+def getTempData(table_name: str, row_index: int, cur: sqlite3.Cursor) -> tuple:
+    # Attempts to retrive data from the given table and row in the db
+    try:
+        # cur_temp.execute("SELECT * FROM temp_data1 WHERE ROWID = ( ? )", (i,),)
+        script = f"SELECT * FROM {table_name} WHERE ROWID = ( ? )"
+        cur.execute(script, (row_index,),)
+        return cur.fetchone()
+    except:
+        return ()
+
 # Fix the functions below
 # def addRegionAdmittance(row, location, table: pandas.DataFrame, con: sqlite3.Connection, cur: sqlite3.Cursor) -> None:
 #     if ADMIT_TITLE in table.columns:

@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS locations (
             url TEXT,
             title TEXT,
             admitted INTEGER,
-            disestableshed INTEGER
+            disestablished INTEGER
 )''')
 con.commit()
 

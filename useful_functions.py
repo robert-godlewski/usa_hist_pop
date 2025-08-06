@@ -62,6 +62,69 @@ def getTempData(table_name: str, row_index: int, cur: sqlite3.Cursor) -> tuple:
     except:
         return ()
 
+def _setYearIndex(table_name: str) -> int:
+    if table_name == 'temp_data1': # index 0 to 7 is 1790 to 1860
+        return 0
+    elif table_name == 'temp_data3': # index 8 to 16 is 1870 to 1950
+        return 8
+    elif table_name == 'temp_data4': # index 17 to 23 is 1960 to 2020
+        return 17
+    elif table_name == 'temp_data5' or table_name == 'temp_data7': # 1910 is index 12
+        return 12
+    else:
+        return -1
+
+def _addInCensus(raw, yearIndex: int) -> dict:
+    try:
+        pop_raw = cleanData(raw)
+    except:
+        pop_raw = None
+    if pop_raw:
+        pop = largeNumstrToNum(pop_raw)
+    else:
+        pop = int(raw)
+    return {
+        'year': (yearIndex*10)+1790,
+        'population': pop,
+    }
+
+def _processRawData(table_name: str, raw_data: tuple, yearIndex: int, data: dict) -> dict:
+    data['census'] = [{} for _ in range(24)] # from census 1790 to 2020
+    d = 0
+    while d < len(raw_data):
+        if d == 0:
+            data['name'] = cleanData(raw_data[d])
+        elif d == 1 and (table_name == 'temp_data1' or table_name == 'temp_data5' or table_name == 'temp_data7'):
+            data['admitted'] = int(raw_data[d])
+        elif d == 2 and table_name == 'temp_data7':
+            relinquished = cleanData(raw_data[d])
+            data['disestablished'] = int(relinquished)
+        else:
+            # try:
+            #     pop_raw = cleanData(raw_data[d])
+            # except:
+            #     pop_raw = None
+            # if pop_raw:
+            #     population = largeNumstrToNum(pop_raw)
+            # else:
+            #     population = int(raw_data[d])
+            # data['census'][yearIndex] = {
+            #     'year': (yearIndex*10)+1790,
+            #     'population': population,
+            # }
+            data['census'][yearIndex] = _addInCensus(raw_data, yearIndex)
+            yearIndex += 1
+        d += 1
+    return data
+
+def setUpData(table_name: str, raw_data: tuple) -> dict:
+    # convert the information from raw_data pertaining to the table_name to a dictionary
+    data = {}
+    y = _setYearIndex(table_name)
+    if y >= 0:
+        data = _processRawData(table_name, raw_data, y, data)
+    return data
+
 # Fix the functions below
 # def addRegionAdmittance(row, location, table: pandas.DataFrame, con: sqlite3.Connection, cur: sqlite3.Cursor) -> None:
 #     if ADMIT_TITLE in table.columns:

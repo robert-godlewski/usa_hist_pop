@@ -30,69 +30,12 @@ while is_converting:
     print("Working on row:", i)
     # Setting it up the data
     raw_data = getTempData(table, i, cur_temp)
-    # try:
-    #     # cur_temp.execute("SELECT * FROM temp_data1 WHERE ROWID = ( ? )", (i,),)
-    #     script = f"SELECT * FROM {table} WHERE ROWID = ( ? )"
-    #     cur_temp.execute(script, (i,),)
-    #     raw_data = cur_temp.fetchone()
-    # except:
-    #     raw_data = None
-    # print(type(raw_data))
-    # print(raw_data)
-    # if len(raw_data) > 0:
-    #     data = {
-    #         # 'id': i, # This will need to change
-    #         'name': cleanData(raw_data[0]),
-    #         'census': [{} for _ in range(24)], # 24 because 1790, 1800, ..., 2020
-    #     }
-    # else:
-    #     data = None
-    #     is_converting = False
     # Populating data or ending the loop
     if len(raw_data) <= 0:
         is_converting = False
     else:
         # Make everything below into a function and fix this whole thing
-        data = {}
-        d = 0
-        data['name'] = cleanData(raw_data[d])
-        d += 1
-        data['census'] = [{} for _ in range(24)] # 24 for each census 1790 to 2020
-        if table == 'temp_data3':
-            y = 8 # to y = 16 which is 1870 to 1950
-        elif table == 'temp_data4':
-            y = 17 # to y = 23 which is 1960 to 2020
-        elif raw_data[d]: # might need to fix but this is fine for now
-            data['admitted'] = int(raw_data[d])
-            d += 1 # d is now 2
-            if table == 'temp_data1':
-                y = 0 # to y = 7 which is 1790 to 1860
-            else: # table is 'temp_data5' or 'temp_data7'
-                y = 12 # which is 1910
-            if table == 'temp_data7':
-                relinquished = cleanData(raw_data[d])
-                data['disestablished'] = int(relinquished)
-                d += 1 # d is now 3
-        else:
-            y = None
-        # For some reason this loop is not working
-        while y and d < len(raw_data):
-            if raw_data[d]:
-                print(f"{type(raw_data[d])} => {raw_data[d]}")
-                try:
-                    pop_raw = cleanData(raw_data[d])
-                except:
-                    pop_raw = None
-                if pop_raw:
-                    population = largeNumstrToNum(pop_raw)
-                else:
-                    population = int(raw_data[d])
-                data['census'][y] = {
-                    'year': (y*10) + 1790,
-                    'population': population
-                }
-            d += 1
-            y += 1
+        data = setUpData(table, raw_data)
     print(data)
     # Adding in the final results in the table to add into the main DB
     if data:

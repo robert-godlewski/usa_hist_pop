@@ -81,8 +81,10 @@ def _addInCensus(raw, yearIndex: int) -> dict:
         pop_raw = None
     if pop_raw:
         pop = largeNumstrToNum(pop_raw)
-    else:
+    elif raw:
         pop = int(raw)
+    else:
+        return {}
     return {
         'year': (yearIndex*10)+1790,
         'population': pop,
@@ -94,25 +96,13 @@ def _processRawData(table_name: str, raw_data: tuple, yearIndex: int, data: dict
     while d < len(raw_data):
         if d == 0:
             data['name'] = cleanData(raw_data[d])
-        elif d == 1 and (table_name == 'temp_data1' or table_name == 'temp_data5' or table_name == 'temp_data7'):
+        elif d == 1 and (table_name == 'temp_data1' or table_name == 'temp_data5' or table_name == 'temp_data7') and raw_data[d]:
             data['admitted'] = int(raw_data[d])
-        elif d == 2 and table_name == 'temp_data7':
+        elif d == 2 and table_name == 'temp_data7' and raw_data[d]:
             relinquished = cleanData(raw_data[d])
             data['disestablished'] = int(relinquished)
         else:
-            # try:
-            #     pop_raw = cleanData(raw_data[d])
-            # except:
-            #     pop_raw = None
-            # if pop_raw:
-            #     population = largeNumstrToNum(pop_raw)
-            # else:
-            #     population = int(raw_data[d])
-            # data['census'][yearIndex] = {
-            #     'year': (yearIndex*10)+1790,
-            #     'population': population,
-            # }
-            data['census'][yearIndex] = _addInCensus(raw_data, yearIndex)
+            data['census'][yearIndex] = _addInCensus(raw_data[d], yearIndex)
             yearIndex += 1
         d += 1
     return data

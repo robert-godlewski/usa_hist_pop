@@ -3,7 +3,7 @@
 import sqlite3
 
 from useful_variables import temp_db #, main_db
-from useful_functions import cleanData, largeNumstrToNum, getTempData, setUpData
+from useful_functions import getTempData, setUpData
 
 tables = [
     'temp_data1', # USA region admittance dates with census populations from 1790 to 1860
@@ -31,11 +31,10 @@ while is_converting:
     # Setting it up the data
     raw_data = getTempData(table, i, cur_temp)
     # Populating data or ending the loop
-    if len(raw_data) <= 0:
-        is_converting = False
-    else:
-        # Make everything below into a function and fix this whole thing
+    if raw_data:
         data = setUpData(table, raw_data)
+    else:
+        is_converting = False
     print(data)
     # Adding in the final results in the table to add into the main DB
     if data:

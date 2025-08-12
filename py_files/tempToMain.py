@@ -110,9 +110,9 @@ if __name__ == '__main__':
     # This only works with the first table and need to fix it for the others
     # table = tables[0]
     for table in tables:
-        processRawTables(table, cur_temp)
+        processRawTables(table, cur_temp, table_raw_data)
 
     con_temp.close()
     print("final table:", table_raw_data)
 
-# Need to save the data to the main db
+    # Need to save the data to the main db
